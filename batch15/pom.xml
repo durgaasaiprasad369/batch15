@@ -83,12 +83,14 @@
 	<groupId>org.springframework.boot</groupId>
 	<artifactId>spring-boot-starter-log4j2</artifactId>
 </dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>com.restTemplect</groupId>
 			<artifactId>restTemplect</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-	</dependencies>
+		-->
+		
+		</dependencies>
 
 	<build>
 		<plugins>
