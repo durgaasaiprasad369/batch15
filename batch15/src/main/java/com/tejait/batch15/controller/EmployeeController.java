@@ -1,78 +1,61 @@
 package com.tejait.batch15.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.tejait.batch15.model.Employee;
 import com.tejait.batch15.service.EmployeeService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-
-
-// controller --> service --> serviceimpl --> repository
 @RestController
-@RequestMapping("employee") // class level mapping
+@RequestMapping("/employee") // Class-level base path
 public class EmployeeController {
 
+    private static final Logger logger = LogManager.getLogger(EmployeeController.class);
+
     @Autowired
-    private EmployeeService service; // inject EmployeeService
+    private EmployeeService service;
 
-    // Save employee (POST)
-    @RequestMapping(value = "saveEmp", method = RequestMethod.POST)
+    // Create Employee
+    @PostMapping("/saveEmp")
     public ResponseEntity<Employee> saveEmployee(@RequestBody Employee emp) {
-        Employee saveEmp = service.saveEmployee(emp);
-        return new ResponseEntity<Employee>(saveEmp, HttpStatus.CREATED);
+        Employee savedEmp = service.saveEmployee(emp);
+        return new ResponseEntity<>(savedEmp, HttpStatus.CREATED);
     }
 
-    // Update employee (PUT)
-    @RequestMapping(value = "updateEmp/{id}", method = RequestMethod.PUT)
+    // Update Employee
+    @PutMapping("/updateEmp/{id}")
     public ResponseEntity<Employee> updateEmployee(@PathVariable int id, @RequestBody Employee emp) {
-        Employee updateEmp = service.updateEmployeeById(id, emp); // correct method call for update
-        return new ResponseEntity<>(updateEmp, HttpStatus.OK);
+        Employee updatedEmp = service.updateEmployeeById(id, emp);
+        return new ResponseEntity<>(updatedEmp, HttpStatus.OK);
     }
 
-    // Delete employee (DELETE)
-    @RequestMapping(value = "deleteEmp/{id}", method = RequestMethod.DELETE)
+    // Delete Employee
+    @DeleteMapping("/deleteEmp/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable Integer id) {
         service.deleteEmployee(id);
-        return new ResponseEntity<String>("Delete successful for ID: " + id, HttpStatus.OK);
+        return ResponseEntity.ok("Delete successful for ID: " + id);
     }
 
-    // Get employee by ID (GET)
-    @RequestMapping(value = "getById/{id}", method = RequestMethod.GET)
+    // Get Employee by ID
+    @GetMapping("/getById/{id}")
     public ResponseEntity<Employee> getByEmpId(@PathVariable Integer id) {
         Optional<Employee> emp = service.getByEmpId(id);
-        
-        if(emp.isPresent())
-	    {
-		   return new ResponseEntity<Employee>(emp.get(), HttpStatus.OK);
-	    }
-	    else
-	    {
-	       return new ResponseEntity<Employee>( HttpStatus.NOT_FOUND);
-	    }
-       
+        return emp.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
+                  .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    // Get all employees (GET)
-    @RequestMapping(value = "getAll", method = RequestMethod.GET)
+    // Get All Employees
+    @GetMapping("/getAll")
     public ResponseEntity<List<Employee>> getAllEmp() {
         List<Employee> list = service.getAllEmp();
+        logger.info("Retrieved all employees");
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 }
-//er-->end point-->url--> http://localhost:8080/employee/saveEmp

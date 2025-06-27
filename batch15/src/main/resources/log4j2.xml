@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${hostName} --- [%15.15t] %-40.40c{1.} : %m%n%ex
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+        <!-- Rolling File Appender -->
+<RollingFile name="RollingFile" filePattern="D:/logs/axis-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN} ${sys:PID} --- [%15.15t] %c : %m%n${sys:LOG_EXCEPTION_CONVERSION_WORD}" />
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+            <DirectWriteRolloverStrategy/>
+        </RollingFile>
+        
+    </Appenders>
+    
+    <Loggers>
+        <Logger name="com.tejait.batch15" level="info" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+ 
+        <Root level="info">
+    <AppenderRef ref="ConsoleAppender"/>
+    <AppenderRef ref="FileAppender"/>
+</Root>
+ 
+    </Loggers>
+</Configuration>
